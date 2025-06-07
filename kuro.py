@@ -1,4 +1,7 @@
 import argparse
+import subprocess
+from mistral_agent import ask_mistral
+
 
 def print_banner():
     with open("banner.txt") as f:
@@ -12,28 +15,38 @@ def main():
 )
     subparsers = parser.add_subparsers(dest="command")
     
-    summarize_parser=subparsers.add_parser("summarize", help="Summarize a file")
-    summarize_parser.add_argument("file", help="Path to file to summarize")
+    ai_parser=subparsers.add_parser("chat", help="Enter AI chat mode")
+
     commit_parser=subparsers.add_parser("commit", help="Make a Git commit")
     commit_parser.add_argument("message", help="Make a git comment")
-    subparsers.add_parser("ask", help="Ask a question")
+
     subparsers.add_parser("exit", help="Exit the program")
+
     args = parser.parse_args()
 
-    if args.command == "summarize":
-        print("📄 You chose to summarize a file")
-        try:
-            with open(args.file, 'r') as f:
-                lines=f.readlines()
-                print("\n Summary: \n")
-                print("".join(lines[:5]))
-        except FileNotFoundError:
-                print("File not found, please check the path.")
-        # You'll later call your summarize function here
+    if args.command=="chat":
+        print("Entering AI chat. Type 'exit' to leave. \n")
+
+
+        history=[]
+
+        while True:
+            try:
+                user_input=input("You > ").strip()
+                if user_input.lower() in ['exit']:
+                        print("Exiting chat, goodbye!")
+                        break
+                response, history=ask_mistral(user_input, history)
+                print(f"\n Kuro > {response}\n")
+            except KeyboardInterrupt:
+                print("\n Exiting chat")
+                break
+
+
+
 
     elif args.command == "commit":
         print("💾 You chose to commit with Git")
-        import subprocess
         
 # checking git repo first and then proceed to add,commit and push.
         try:
@@ -50,9 +63,7 @@ def main():
         except suprocess.CalledProcessError as e:
             print("Git operation failed..", e)
 
-    elif args.command == "ask":
-        print("🤖 You asked me something")
-        # AI question logic goes here
+
 
     elif args.command == "exit":
         print("👋 Goodbye!")
