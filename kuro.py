@@ -14,7 +14,8 @@ def main():
     
     summarize_parser=subparsers.add_parser("summarize", help="Summarize a file")
     summarize_parser.add_argument("file", help="Path to file to summarize")
-    subparsers.add_parser("commit", help="Make a Git commit")
+    commit_parser=subparsers.add_parser("commit", help="Make a Git commit")
+    commit_parser.add_argument("message", help="Make a git comment")
     subparsers.add_parser("ask", help="Ask a question")
     subparsers.add_parser("exit", help="Exit the program")
     args = parser.parse_args()
@@ -32,7 +33,22 @@ def main():
 
     elif args.command == "commit":
         print("💾 You chose to commit with Git")
-        # Git automation goes here
+        import subprocess
+        
+# checking git repo first and then proceed to add,commit and push.
+        try:
+            subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], check=True, stdout=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            print("X not a Git Repo. Use 'git init' first.")
+
+        print("Commiting...")
+        try:
+            subprocess.run(["git", "add", "."],check=True)
+            subprocess.run(["git", "commit", "-m", args.message],check=True) 
+            subprocess.run(["git", "push"],check=True)
+            print("Changes pushed successfully! :)")
+        except suprocess.CalledProcessError as e:
+            print("Git operation failed..", e)
 
     elif args.command == "ask":
         print("🤖 You asked me something")
