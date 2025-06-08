@@ -37,7 +37,7 @@ def get_git_diff():
 def generate_commit(diff):
     prompt=(
         "You are a helpful AI that generates concise, clear, "
-        "and conventional Git commit messages based on the following git diff: \n\n" f"{diff}\n\nCommit message:"
+        "and conventional Git commit messages, try to keep the subject line <=72 based on the following git diff: \n\n" f"{diff}\n\nCommit message:"
     )
     response, _=ask_mistral(prompt, history=[])
     return response.strip()
