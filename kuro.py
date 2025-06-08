@@ -93,7 +93,7 @@ def main():
 
                 elif user_input=="/show":
                         if loaded_file:
-                            print(f"\n Currently loaded: `{loaded_path}`\n\n{loadedfile}\n")
+                            print(f"\n Currently loaded: `{loaded_path}`\n\n{loaded_file}\n")
                         else:
                             print("No file loaded.")
                         continue
