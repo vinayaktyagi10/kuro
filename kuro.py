@@ -1,10 +1,16 @@
+#!/usr/bin/env python3
+
 import argparse
 import subprocess
-from mistral_agent import ask_mistral
+import os
+from mistral_agent import ask_mistral 
+from mistral_agent import load_history
 
+BASE_DIR= "/home/ricing/kuro"
 
 def print_banner():
-    with open("banner.txt") as f:
+    banner_path=os.path.join(BASE_DIR, "banner.txt")
+    with open(banner_path) as f:
         print(f.read())
 
 def main():
@@ -15,7 +21,7 @@ def main():
 )
     subparsers = parser.add_subparsers(dest="command")
     
-    ai_parser=subparsers.add_parser("chat", help="Enter AI chat mode")
+    chat_parser=subparsers.add_parser("chat", help="Enter AI chat mode")
 
     commit_parser=subparsers.add_parser("commit", help="Make a Git commit")
     commit_parser.add_argument("message", help="Make a git comment")
@@ -28,7 +34,7 @@ def main():
         print("Entering AI chat. Type 'exit' to leave. \n")
 
 
-        history=[]
+        history=load_history()
 
         while True:
             try:
@@ -53,6 +59,7 @@ def main():
             subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], check=True, stdout=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             print("X not a Git Repo. Use 'git init' first.")
+            return
 
         print("Commiting...")
         try:
@@ -60,7 +67,7 @@ def main():
             subprocess.run(["git", "commit", "-m", args.message],check=True) 
             subprocess.run(["git", "push"],check=True)
             print("Changes pushed successfully! :)")
-        except suprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             print("Git operation failed..", e)
 
 
