@@ -51,8 +51,8 @@ kuro [command] [options]
 ### 💬Chat Mode:
 
 ```bash
-kuro chat```
-
+kuro chat
+```
 - Talk to Kuro
 
 - Load a file with /load /path/to/file
@@ -64,8 +64,8 @@ kuro chat```
 ### 🔧 Git Commit Mode
 
 ```bash
-kuro commit "your commit message"```
-
+kuro commit "your commit message"
+```
 - Automatically stages, commits, and pushes
 
 - Use --ai to generate commit message from git diff (optional feature)
