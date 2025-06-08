@@ -59,6 +59,8 @@ def main():
     subparsers.add_parser("exit", help="Exit the program")
 
     args = parser.parse_args()
+    loaded_file=None
+    loaded_path=None
 
     if args.command=="chat":
         print("Entering AI chat. Type 'exit' to leave. \n")
@@ -69,15 +71,47 @@ def main():
         while True:
             try:
                 user_input=input("You > ").strip()
-                if user_input.lower() in ['exit']:
+                if user_input.lower() == "exit":
                         print("Exiting chat, goodbye!")
                         break
+                elif user_input.startswith("/load "):
+                        path=user_input[len("/load "):].strip()
+                        try:
+                            with open(path, 'r') as f:
+                                loaded_file=f.read()
+                                loaded_path=path
+                            print(f"File `{path}` loaded into session memory.")
+                        except FileNotFoundError:
+                            print(f"File not found.")
+                        continue
+    
+                elif user_input=="/unload":
+                    loaded_file=None
+                    loaded_path=None
+                    print("File context cleared.")
+                    continue
+
+                elif user_input=="/show":
+                        if loaded_file:
+                            print(f"\n Currently loaded: `{loaded_path}`\n\n{loadedfile}\n")
+                        else:
+                            print("No file loaded.")
+                        continue
+                
+                if loaded_path:
+                        print(f"File context active: {loaded_path}")
+                if loaded_file:
+                    user_input = (
+                        f"You are an AI assistant working with the file `{loaded_path}`.\n\n"
+                        f"--- FILE CONTENT START ---\n{loaded_file}\n--- FILE CONTENT END ---\n\n"
+                        f"Now, answer the following based on the above file:\n{user_input}"
+                    )
                 response, history=ask_mistral(user_input, history)
                 print(f"\n Kuro > {response}\n")
             except KeyboardInterrupt:
                 print("\n Exiting chat")
                 break
-
+    
 
 
 
