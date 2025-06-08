@@ -2,9 +2,13 @@
 
 Kuro is a minimalist yet powerful terminal-based AI assistant built with Python, powered by [Mistral](https://mistral.ai/) running locally via [Ollama](https://ollama.com/). It's designed to be extendable, smart, and just the right kind of helpful.
 
-![screenshot](https://your-screenshot-url-if-any)
-
 ---
+
+## Screenshots
+![Banner](screenshots/Banner.png)
+![File Manipulation](screenshots/load_show_initiation.png)
+![Unloading](screenshots/unload.png)
+![Commiting using AI](screenshots/commit_ai.png)
 
 ## ✨ Features
 
