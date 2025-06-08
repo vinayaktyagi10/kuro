@@ -25,16 +25,17 @@ Make sure you have:
 - [`ollama`](https://ollama.com) installed and running locally with the `mistral` model:
 
 ```bash
-ollama run mistral```
-
+ollama run mistral
+```
 Then:
 
-```git clone https://github.com/your-username/kuro.git
+```bash
+git clone https://github.com/your-username/kuro.git
 cd kuro
 pip install -r requirements.txt
 chmod +x kuro.py
-ln -s $(pwd)/kuro.py ~/.local/bin/kuro```
-
+ln -s $(pwd)/kuro.py ~/.local/bin/kuro
+```
 Now just type kuro from anywhere in your terminal!
 
 ---
@@ -43,11 +44,14 @@ Now just type kuro from anywhere in your terminal!
 
 ### General Command Format:
 
-```kuro [command] [options]```
+```bash
+kuro [command] [options]
+```
 
 ### 💬Chat Mode:
 
-```kuro chat```
+```bash
+kuro chat```
 
 - Talk to Kuro
 
@@ -59,7 +63,8 @@ Now just type kuro from anywhere in your terminal!
 
 ### 🔧 Git Commit Mode
 
-```kuro commit "your commit message"```
+```bash
+kuro commit "your commit message"```
 
 - Automatically stages, commits, and pushes
 
