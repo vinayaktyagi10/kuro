@@ -13,6 +13,35 @@ def print_banner():
     with open(banner_path) as f:
         print(f.read())
 
+def get_git_diff():
+    try:
+        result=subprocess.run(["git", "diff", "--staged"],
+                              capture_output=True,
+                              text=True,
+                              check=True,
+                              )
+        diff=result.stdout.strip()
+
+        if not diff:
+                result=subprocess.run(
+                ["git", "diff"],
+                capture_output=True,
+                text=True,
+                check=True,
+                )
+                diff=result.stdout.strip()
+        return diff
+    except subprocess.CalledProcessError:
+        return None
+
+def generate_commit(diff):
+    prompt=(
+        "You are a helpful AI that generates concise, clear, "
+        "and conventional Git commit messages based on the following git diff: \n\n" f"{diff}\n\nCommit message:"
+    )
+    response, _=ask_mistral(prompt, history=[])
+    return response.strip()
+
 def main():
     print_banner()
 
@@ -24,7 +53,8 @@ def main():
     chat_parser=subparsers.add_parser("chat", help="Enter AI chat mode")
 
     commit_parser=subparsers.add_parser("commit", help="Make a Git commit")
-    commit_parser.add_argument("message", help="Make a git comment")
+    commit_parser.add_argument("message", nargs="?", help="Make a git comment")
+    commit_parser.add_argument("--ai", action="store_true", help="Generate commit message using AI from git diff")
 
     subparsers.add_parser("exit", help="Exit the program")
 
@@ -61,14 +91,43 @@ def main():
             print("X not a Git Repo. Use 'git init' first.")
             return
 
-        print("Commiting...")
-        try:
-            subprocess.run(["git", "add", "."],check=True)
-            subprocess.run(["git", "commit", "-m", args.message],check=True) 
-            subprocess.run(["git", "push"],check=True)
-            print("Changes pushed successfully! :)")
-        except subprocess.CalledProcessError as e:
-            print("Git operation failed..", e)
+        if args.command == "commit":
+    # Check if inside a Git repo
+           try:
+                subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], check=True, stdout=subprocess.DEVNULL)
+           except subprocess.CalledProcessError:
+             print("X Not a Git repository. Use 'git init' first.")
+             return
+
+           if args.ai:
+             print("Generating commit message with AI...")
+             diff = get_git_diff()
+             if not diff:
+                print("⚠️ No changes detected to commit.")
+                return
+
+             commit_msg = generate_commit(diff)
+             print(f"AI Commit Message:\n{commit_msg}\n")
+
+             confirm = input("Commit with this message? (y/n): ").strip().lower()
+             if confirm != "y":
+                print("Commit aborted.")
+                return
+
+           else:
+                if not args.message:
+                    print("X Please provide a commit message or use --ai to generate one.")
+                    return
+                commit_msg = args.message
+
+    # Proceed to git add, commit, push
+           try:
+                subprocess.run(["git", "add", "."], check=True)
+                subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+                subprocess.run(["git", "push"], check=True)
+                print("Changes pushed successfully!")
+           except subprocess.CalledProcessError as e:
+                print("Git operation failed:", e)
 
 
 
